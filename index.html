@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Image Prompts 15</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo",
+                 "Malgun Gothic", Roboto, sans-serif;
+    background: #f5f5f7;
+    color: #1a1a2e;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 24px;
+    min-height: 100vh;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px 22px;
+    height: fit-content;
+    position: sticky;
+    top: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 36px;
+  }
+  .brand-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #6366f1;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 20px;
+  }
+  .brand-name {
+    font-size: 19px;
+    font-weight: 800;
+    color: #1a1a2e;
+  }
+  .nav-group { margin-bottom: 22px; }
+  .nav-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #9ca3af;
+    padding: 0 14px;
+    margin-bottom: 10px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border-radius: 12px;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 2px;
+    text-decoration: none;
+  }
+  .nav-item:hover { background: #f3f4f6; }
+  .nav-item.active {
+    background: #6366f1;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+  }
+  .nav-icon { width: 18px; display: inline-block; text-align: center; }
+
+  /* Main */
+  .main { min-width: 0; }
+  .search-bar {
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .search-bar input {
+    border: none;
+    outline: none;
+    flex: 1;
+    font-size: 14px;
+    background: transparent;
+    color: #1a1a2e;
+  }
+  .search-bar input::placeholder { color: #9ca3af; }
+  .search-icon { color: #9ca3af; font-size: 16px; }
+
+  /* Top bar (instagram) */
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+  }
+  .insta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 16px 8px 8px;
+    text-decoration: none;
+    color: #1a1a2e;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.15s, transform 0.1s;
+  }
+  .insta-btn:hover {
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    transform: translateY(-1px);
+  }
+  .insta-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #feda75, #d62976 50%, #4f5bd5);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+  }
+  .insta-meta { line-height: 1.2; }
+  .insta-name { font-size: 13px; font-weight: 700; }
+  .insta-handle { font-size: 11.5px; color: #6b7280; }
+
+  /* Gift banner */
+  .gift-banner {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: linear-gradient(135deg, #fb7185 0%, #f97316 100%);
+    border-radius: 16px;
+    padding: 18px 24px;
+    margin-bottom: 24px;
+    text-decoration: none;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(251,113,133,0.22);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .gift-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(249,115,22,0.32);
+  }
+  .gift-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: rgba(255,255,255,0.18);
+    flex-shrink: 0;
+    display: block;
+  }
+  .gift-text { flex: 1; }
+  .gift-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .gift-title {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .gift-arrow {
+    font-size: 20px;
+    color: #fff;
+    transition: transform 0.15s;
+  }
+  .gift-banner:hover .gift-arrow { transform: translateX(4px); }
+
+  .page-header { padding: 0 4px 24px; }
+  .page-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+  }
+  .page-subtitle {
+    font-size: 14px;
+    color: #6b7280;
+  }
+
+  /* Cards */
+  .card-list { display: flex; flex-direction: column; gap: 16px; }
+  .card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 24px 26px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    transition: box-shadow 0.15s;
+  }
+  .card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.06); }
+
+  .card-head {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .card-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #eef2ff;
+    color: #6366f1;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .card-meta { flex: 1; min-width: 0; }
+  .card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+  .card-howto {
+    font-size: 13px;
+    color: #9ca3af;
+  }
+
+  /* Prompt box */
+  .prompt-wrap {
+    position: relative;
+    background: #fafafb;
+    border: 1px solid #eef0f3;
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .prompt-text {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+                 "Liberation Mono", monospace;
+    font-size: 13px;
+    line-height: 1.65;
+    color: #374151;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 8px;
+  }
+  .prompt-text::-webkit-scrollbar { width: 6px; }
+  .prompt-text::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 6px;
+  }
+  .prompt-text.expanded { max-height: none; }
+
+  .prompt-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    gap: 8px;
+  }
+  .toggle-btn {
+    background: none;
+    border: none;
+    color: #6366f1;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 0;
+  }
+  .toggle-btn:hover { text-decoration: underline; }
+
+  .copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .copy-btn:hover { background: #4f46e5; }
+  .copy-btn:active { transform: scale(0.97); }
+  .copy-btn.copied {
+    background: #10b981;
+  }
+
+  @media (max-width: 880px) {
+    .layout {
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 16px;
+    }
+    .sidebar {
+      position: static;
+      padding: 20px 18px;
+      border-radius: 16px;
+    }
+    .brand { margin-bottom: 18px; }
+    .brand-logo { width: 38px; height: 38px; font-size: 17px; }
+    .brand-name { font-size: 17px; }
+    .nav-group:last-child { display: none; }
+    .nav-group { margin-bottom: 0; }
+
+    .top-bar { margin-bottom: 12px; }
+    .insta-btn { padding: 6px 14px 6px 6px; }
+    .insta-avatar { width: 30px; height: 30px; font-size: 12px; }
+    .insta-name { font-size: 12px; }
+    .insta-handle { font-size: 11px; }
+
+    .gift-banner {
+      padding: 14px 16px;
+      gap: 12px;
+      border-radius: 14px;
+      margin-bottom: 18px;
+    }
+    .gift-icon { width: 42px; height: 42px; }
+    .gift-label { font-size: 11px; }
+    .gift-title { font-size: 13.5px; line-height: 1.35; }
+    .gift-arrow { font-size: 18px; }
+
+    .page-header { padding: 0 2px 18px; }
+    .page-title { font-size: 24px; }
+    .page-subtitle { font-size: 13px; }
+
+    .card-list { gap: 14px; }
+    .card { padding: 18px 16px; border-radius: 14px; }
+    .card-head { gap: 12px; margin-bottom: 12px; }
+    .card-number { width: 40px; height: 40px; font-size: 14px; }
+    .card-title { font-size: 15.5px; }
+    .card-howto { font-size: 12px; }
+
+    .prompt-wrap { padding: 14px; border-radius: 10px; }
+    .prompt-text { font-size: 12.5px; max-height: 180px; }
+    .copy-btn { padding: 9px 14px; font-size: 12.5px; }
+    .toggle-btn { font-size: 12px; }
+  }
+
+  @media (max-width: 480px) {
+    .layout { padding: 12px; gap: 12px; }
+    .gift-text { min-width: 0; }
+    .gift-title {
+      font-size: 13px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .page-title { font-size: 22px; }
+    .card-title { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">P</div>
+      <div class="brand-name">Prompts 15</div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">MAIN</div>
+      <div class="nav-item active">
+        <span class="nav-icon">📁</span> All Prompts
+      </div>
+    </div>
+
+    <div class="nav-group">
+      <div class="nav-label">INDEX</div>
+      <a class="nav-item" href="#p01"><span class="nav-icon">01</span> 미니 캐릭터 스크랩북</a>
+      <a class="nav-item" href="#p02"><span class="nav-icon">02</span> 낙서 스타일</a>
+      <a class="nav-item" href="#p03"><span class="nav-icon">03</span> 인스탁 폴라로이드</a>
+      <a class="nav-item" href="#p04"><span class="nav-icon">04</span> 여행 포스터</a>
+      <a class="nav-item" href="#p05"><span class="nav-icon">05</span> 종이 공예 일러스트</a>
+      <a class="nav-item" href="#p06"><span class="nav-icon">06</span> 스크랩북</a>
+      <a class="nav-item" href="#p07"><span class="nav-icon">07</span> 3D 툰 캐릭터</a>
+      <a class="nav-item" href="#p08"><span class="nav-icon">08</span> 별자리 포스터</a>
+      <a class="nav-item" href="#p09"><span class="nav-icon">09</span> 민속풍 플랫</a>
+      <a class="nav-item" href="#p10"><span class="nav-icon">10</span> 어린이 크레용</a>
+      <a class="nav-item" href="#p11"><span class="nav-icon">11</span> 인포그래픽</a>
+      <a class="nav-item" href="#p12"><span class="nav-icon">12</span> 종이 조각 포스터</a>
+      <a class="nav-item" href="#p13"><span class="nav-icon">13</span> 동화같은 낙서 세계</a>
+      <a class="nav-item" href="#p14"><span class="nav-icon">14</span> 아이폰 잠금화면</a>
+      <a class="nav-item" href="#p15"><span class="nav-icon">15</span> 여행 타이포그래피</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="top-bar">
+      <a class="insta-btn" href="https://www.instagram.com/woojooboss_" target="_blank" rel="noopener">
+        <div class="insta-avatar">우</div>
+        <div class="insta-meta">
+          <div class="insta-name">우주보스</div>
+          <div class="insta-handle">@woojooboss_</div>
+        </div>
+      </a>
+    </div>
+
+    <a class="gift-banner" href="https://blog.naver.com/woojooboss/223558177937" target="_blank" rel="noopener">
+      <img class="gift-icon" src="gift.png" alt="gift" />
+      <div class="gift-text">
+        <div class="gift-label">우주보스의 선물</div>
+        <div class="gift-title">10GB 분량의 무료 콘텐츠 소스팩 받기</div>
+      </div>
+      <div class="gift-arrow">→</div>
+    </a>
+
+    <div class="page-header">
+      <h1 class="page-title">이미지 프롬프트 15종</h1>
+      <p class="page-subtitle">복사 버튼으로 프롬프트를 바로 복사해서 사용하세요.</p>
+    </div>
+
+    <div class="card-list" id="cardList">
+
+      <article class="card" id="p01" data-search="미니 캐릭터 스크랩북 scrapbook chibi">
+        <div class="card-head">
+          <div class="card-number">01</div>
+          <div class="card-meta">
+            <h3 class="card-title">미니 캐릭터 스크랩북</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Transform the provided reference image into a cozy aesthetic scrapbook-style composition while strictly preserving the original subject, identity, pose, lighting, and background.
+Add multiple small "mini version" characters of the same person (chibi / doll-like style), placed naturally around the scene (on objects, table, shoulder, etc.). These mini figures must match the subject's face, hairstyle, outfit, and vibe consistently, styled as cute 3D collectible figurines.
+Show them doing different activities (reading, posing, taking photos, relaxing).
+Overlay handwritten-style doodles and annotations across the image: arrows, hearts, stars, sparkles, icons, and playful captions connected to elements in the scene.
+Use a soft pastel color palette (white base with pink, peach, blue accents).
+Keep the frame visually rich and filled but balanced and clean.
+Style: warm, cozy lighting, dreamy Instagram scrapbook aesthetic, soft depth of field, highly detailed, polished but playful.
+The final result must look like the SAME original image enhanced with mini alter-egos and aesthetic annotations — not a recreated or different scene.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p02" data-search="낙서 스타일 doodle">
+        <div class="card-head">
+          <div class="card-number">02</div>
+          <div class="card-meta">
+            <h3 class="card-title">낙서 스타일</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Analyze the uploaded image and preserve the original subject, composition, and lighting. Do not alter the identity or structure of the main subject. Add playful, hand-drawn doodles that interact directly with the subject in the image. The doodles should mimic, follow, or exaggerate the shapes, gestures, or motion present—such as outlining poses, extending limbs, adding motion lines, or creating imaginative elements that "respond" to the subject.
+Ensure the doodles feel naturally integrated into the scene, as if they were drawn on top of the photo with intention. Use a sketchy, imperfect, hand-drawn style with organic lines, slightly uneven strokes, and a casual illustrated feel. Include whimsical handwritten text elements placed around the image. The text should match the mood or implied context of the scene, with a playful and spontaneous tone.
+Avoid fixed phrases—generate context-aware, creative, and humorous text that fits each unique image. Maintain a balanced composition so the doodles enhance the image without overwhelming the original subject. Keep the overall aesthetic fun, expressive, and social-media-ready. High resolution, clean overlay, vibrant yet natural color harmony.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p03" data-search="인스탁 폴라로이드 생일 polaroid birthday instax">
+        <div class="card-head">
+          <div class="card-number">03</div>
+          <div class="card-meta">
+            <h3 class="card-title">인스탁 폴라로이드 생일 사진</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">A close-up indoor birthday scene captured with strong on-camera direct flash.
+Foreground (main focus): A hand holding a pastel pink instant camera (Instax Mini style), freshly printed polaroid photo coming out from the top. She has soft almond nail with soft pink with floral nail art polish and wears silver rings.
+Inside The polaroid photo : a beautiful girl making a kissy face while holding the same bouquet of flowers playful candid pose, soft direct flash look. She is wearing a soft blush pink off shoulder mini dress with lace details.
+Background (softly blurred with shallow depth of field):
+• A round white birthday cake decorated with pink floral buttercream details and "Happy Birthday" written in script
+• A single lit candle glowing warmly
+• A large romantic bouquet of pink roses and soft green flowers arranged behind the cake
+• Wooden table surface with warm brown tone
+Mood:
+Warm, intimate, nostalgic birthday atmosphere. Soft bokeh, creamy highlights, romantic pastel tones.
+Color palette:
+Blush pink, warm ivory, soft green, baby blue, chocolate brown, golden candlelight.
+Composition:
+Close-up shot, slightly angled downward.
+Main focus on the polaroid print and camera in hand.
+Background softly blurred with smooth bokeh.
+Natural candid aesthetic with cozy indoor vibes.
+Lighting:
+Warm tungsten indoor lighting mixed with candle glow.
+Soft shadows.
+Gentle highlight on the camera body.
+Texture details:
+• Matte cake frosting
+• Glossy candle flame
+• Soft velvety flower petals
+• Smooth plastic camera body
+Aesthetic keywords:
+polaroid aesthetic, cozy birthday vibe, nostalgic film tone, warm indoor lighting, soft focus, shallow depth of field, romantic home celebration
+
+Camera Settings (To Recreate This Look)
+If Using Mirrorless / DSLR:
+Lens: 35mm or 50mm
+Aperture: f/1.8 – f/2.2
+ISO: 400 – 800 (depending on indoor light)
+Shutter Speed: 1/100 – 1/160
+White Balance: Tungsten / 3200K – 3800K
+Focus Mode: Single-point AF on polaroid print
+The flash creates: • Bright, crisp highlights on the plastic camera body
+• Hard shadows behind the hand and camera
+• Strong texture on the cake frosting
+• Slight shine on the nail polish
+• High contrast between subject and background
+Midground: The polaroid print shows a darker birthday setup with cake and flowers.
+Background:
+• Round white birthday cake with pink buttercream floral piping
+• "Happy Birthday" chocolate writing
+• A single candle (flame slightly overexposed from flash reflection)
+• Large pink rose bouquet behind
+• Wooden table surface
+Lighting style:
+Harsh direct flash, frontal lighting
+Noticeable shadow falloff
+Slightly overexposed highlights
+Cool flash tone mixed with warm indoor ambient light
+Mood:
+Y2K, nostalgic party snapshot, casual candid, early 2000s digital camera vibe, chaotic cute, glossy textures
+Color tone:
+Cooler whites from flash
+Pink tones slightly saturated
+Background slightly darker due to flash falloff
+Texture emphasis:
+Flash enhances cake frosting detail
+Petal texture more visible
+Plastic camera looks glossy
+Skin slightly brightened with flash reflection
+Aesthetic keywords:
+direct flash aesthetic, Y2K birthday vibe, digital camera 2005, party snapshot, glossy highlights, harsh shadow, candid celebration
+
+Camera Settings for Direct Flash Look
+DSLR / Mirrorless:
+Lens: 35mm or 50mm
+Aperture: f/4 – f/5.6 (sharper look)
+ISO: 200 – 400
+Shutter Speed: 1/125
+White Balance: Flash (5500K)
+Flash: On-camera direct flash (no diffuser)</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p04" data-search="여행 포스터 travel poster">
+        <div class="card-head">
+          <div class="card-number">04</div>
+          <div class="card-meta">
+            <h3 class="card-title">여행 포스터</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Create a stylized travel poster / graphic collage for [CITY/COUNTRY]. The main subject should be a stylish international tourist visiting [CITY/COUNTRY], clearly presented as a traveler and not a local resident. Show the tourist wearing modern travel fashion, with details such as a camera, backpack, sunglasses, map, or suitcase, exploring the culture and atmosphere of [CITY/COUNTRY].
+Place the tourist in a dynamic composition surrounded by iconic architecture, streets, landscapes, landmarks, transportation, food, signage, and cultural elements associated with [CITY/COUNTRY]. Blend realistic character detail with a graphic collage background made of layered paper textures, torn poster edges, sticker elements, halftone dots, editorial typography, and bold geometric shapes. Include authentic visual motifs from [CITY/COUNTRY] but keep the tourist's appearance and styling globally fashionable and clearly foreign to the setting.
+Add a large readable headline: "LOST IN [CITY/COUNTRY]". Modern, artistic, premium editorial travel poster aesthetic, balanced layout, print-worthy composition.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p05" data-search="종이 공예 일러스트 paper craft">
+        <div class="card-head">
+          <div class="card-number">05</div>
+          <div class="card-meta">
+            <h3 class="card-title">종이 공예 일러스트</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Convert this image into a soft, handcrafted paper-cut layered illustration style, inspired by papercraft diorama aesthetics. Use smooth rounded shapes, simplified cute character proportions, and minimal facial details (dot eyes, blush cheeks) to create a warm, charming look. Apply stacked paper layers with visible depth, subtle shadows between layers, and clean cut edges that resemble laser-cut cardstock. Add a distinct white outer outline layer surrounding each main character, resembling a thick sticker border or white cut-paper backing, clearly separating the characters from the background. This white layer should feel like an intentional paper layer, not a glow. Use a pastel color palette with muted blues, greens, and warm neutrals, balanced and calming. Lighting should feel soft, diffused, and even, enhancing the dimensional paper layers without harsh contrast. Textures should appear matte and tactile, like thick art paper or craft foam. Overall mood: cozy, wholesome, gentle, and storybook-like, with a playful yet polished handcrafted feel suitable for modern illustration, children's books, or decorative art.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p06" data-search="스크랩북 scrapbook sticker">
+        <div class="card-head">
+          <div class="card-number">06</div>
+          <div class="card-meta">
+            <h3 class="card-title">스크랩북</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Transform the uploaded photo into Sticker Collage Scrapbook Cover Effect. Use the uploaded image as the ONLY identity reference for the subject. Preserve identity, face shape, hairstyle, expression, outfit cues, and overall recognizability while rendering the final concept in a polished, premium, highly shareable way. Build the full scene around the exact visual language implied by the title. Keep the subject clearly readable. Add the right atmosphere, props, and composition cues to make the concept instantly understandable.
+Negative constraints. No identity drift, no extra people, no broken anatomy, no muddy rendering, no generic AI artifacts, and no irrelevant mixed styles.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p07" data-search="3D 툰 캐릭터 caricature toon twin">
+        <div class="card-head">
+          <div class="card-number">07</div>
+          <div class="card-meta">
+            <h3 class="card-title">나의 3D 툰 캐릭터</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Create a premium high-quality 3D caricature companion of the person in the reference image while keeping the original realistic person fully present and untouched. The realistic person must remain photorealistic, highly detailed and faithful to the original photo. Create a stylized 3D caricature version of the SAME person standing beside them.
+Preserve the same: outfit, hairstyle, accessories, fashion styling, identity, facial resemblance, attitude and vibe.
+The caricature must have: large expressive eyes, slightly oversized head, smooth cinematic skin, Pixar/Disney-inspired premium 3D styling, smaller body proportions, but still look fashionable and recognizable, NOT childish, toy-like or baby-sized.
+IMPORTANT: The caricature height should be approximately shoulder to ear level of the real person, never tiny or child-sized. The caricature and real person must be physically and emotionally interacting naturally.
+Examples of interaction: holding hands, looking at each other, walking together, sharing an object, leaning, playful pose, touching shoulder, mirroring pose, reacting to each other, casual chemistry, candid companionship.
+The caricature should feel like a living animated version of the same person existing in the same world. Preserve original scene, lighting and perspective whenever possible.
+Professional photography composition, cinematic lighting, realistic shadows, luxury editorial realism mixed with premium stylized 3D animation. No tiny companion, no side mascot, no disconnected pose, no separate standing character, no toy proportions, no plastic doll look, no replacing the original person.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p08" data-search="별자리 포스터 zodiac">
+        <div class="card-head">
+          <div class="card-number">08</div>
+          <div class="card-meta">
+            <h3 class="card-title">별자리 포스터</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">I'am "Zodiac Sign" Create a poster inspired by Yumi's Cells with the same soft, aesthetic, slice-of-life vibe and background style, the zodiac theme is fully reflected in the design. The subject's face must remain completely unchanged and untouched. Surround the subject with multiple small, raw yet realistic cute chibi-style mini 3D versions of the subject, designed like expressive "cells" with oversized heads, glossy high-detail finishes, and playful emotions.
+Each mini character represents traits associated with the zodiac sign and is engaged in different actions: * one clinging onto the subject's arm * one cheering with arms raised * one reading a book * one drinking coffee * one lying down using a phone * one making a wacky exaggerated face * one looking tired or stressed * one shouting energetically * one with messy or chaotic hair energy posture, and behavior.
+Overall style: clean aesthetic composition, white sticker outlines, soft pastel color palette, high-detail glossy 3D chibi look, cute Korean-inspired design. Add playful hand-drawn doodles interacting directly with the subject and chibi characters—outlining poses, extending limbs, adding motion lines, and visually reacting to their actions to enhance movement and storytelling. Each chibi "cell" should visually reflect personality traits of the zodiac sign through their expressions. Use a 4:5 vertical aspect ratio, raw natural poster feel, with the zodiac identity clearly integrated into the overall concept.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p09" data-search="민속풍 플랫 folk flat illustration">
+        <div class="card-head">
+          <div class="card-number">09</div>
+          <div class="card-meta">
+            <h3 class="card-title">민속풍 플랫 일러스트</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Please transform the entire image into a single Decorative Folk Flat Illustration with Doodle elements. Use a bold and playful color palette, completely different from the original image. Simplify all details into clean, flat shapes with a handmade, slightly imperfect feel, as if drawn on a sheet of white paper. The overall style should look cute, childlike, and whimsical. Faceless</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p10" data-search="어린이 크레용 crayon">
+        <div class="card-head">
+          <div class="card-number">10</div>
+          <div class="card-meta">
+            <h3 class="card-title">어린이 크레용 그림</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Transform the attached image into a drawing that looks like it was made by a very young child, around 3 to 4 years old, using crayons.
+The drawing should feel silly, clumsy, and adorably bad, as if the child was trying to draw what they saw but only vaguely understood the subject. The lines should not be straight or clean. Avoid adult-level composition, realistic proportions, accurate anatomy, detailed shading, or polished illustration.
+Make it look awkward, naive, uneven, and a little random, like it was drawn from a toddler's point of view. It is okay if the result looks messy, strange, funny, and not fully accurate to the original image.
+Style: childish crayon drawing, rough scribbly lines, uneven shapes, simple colors, imperfect proportions, loose interpretation of the attached image.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p11" data-search="인포그래픽 infographic">
+        <div class="card-head">
+          <div class="card-number">11</div>
+          <div class="card-meta">
+            <h3 class="card-title">인포그래픽 이미지</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Create an infographic image of [OBJECT NAME], combining a realistic photograph or photoreal render of the object with technical annotation overlays placed directly on top.
+Use black ink–style line drawings and text (technical pen / architectural sketch look) on a pure white studio background, including:
+•Key component labels
+•Internal cutaway or exploded-view outlines
+•Measurements, dimensions, and scale markers
+•Material callouts and quantities
+•Arrows indicating function, force, or flow (air, sound, power, pressure)
+•Simple schematic or sectional diagrams where relevant
+Place the title [OBJECT NAME] inside a hand-drawn technical annotation box in one corner.
+Style & layout rules:
+•The real object remains clearly visible beneath the annotations
+•Annotations feel sketched, technical, and architectural
+•Clean composition with balanced negative space
+•Educational, museum-exhibit / engineering-manual vibe
+Visual style:
+Minimal technical illustration aesthetic, black linework over realistic imagery, precise but slightly hand-drawn feel.
+Color palette:
+White background, black annotation lines and text only. No colors.
+Output:
+1080×1080, ultra-crisp, social-feed optimized, no watermark.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p12" data-search="종이 조각 포스터 paper cutting collage">
+        <div class="card-head">
+          <div class="card-number">12</div>
+          <div class="card-meta">
+            <h3 class="card-title">종이 조각 포스터</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Make the attached image into a collage artwork.
+Newspapers, magazines, and leaflets are torn by hand and pasted with glue, all expressions are completed with large torn paper. The torn section, crumping, overlapping, full mark, etc. of the paper are expressed in detail.
+Don't use the pieces of paper too small, place them randomly at different angles and directions, the direction of the paper rotates randomly, and make it like a real collage that a person roughly pasted by hand.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p13" data-search="동화같은 낙서 세계 whimsical doodle world">
+        <div class="card-head">
+          <div class="card-number">13</div>
+          <div class="card-meta">
+            <h3 class="card-title">동화같은 낙서 세계</h3>
+            <div class="card-howto">사진을 업로드 후 아래 프롬프트를 붙여넣기 하세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Analyze the uploaded image and preserve the original subject, composition, and lighting exactly. Do not alter the identity, pose, clothing, or structure of the main subject in any way. Replace only the background with a whimsical, hand-drawn crayon or colored pencil doodle scene on a white or off-white paper-like surface.
+The doodle background should feel like a child's imaginative drawing — featuring loose, expressive strokes with bold outlines, simple shapes, and playful details like a smiling sun, fluffy clouds, scribbled grass, birds, or other scene-appropriate elements. The subject must remain photorealistic and sharp, while the background is fully illustrated in doodle style. The two elements should blend naturally at the edges — no hard cutouts or visible masking.
+Match the doodle's color palette loosely to the subject's outfit or mood for a cohesive, storybook feel. Overall aesthetic: joyful, cute, and whimsical — like the subject stepped into a hand-drawn world.</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p14" data-search="아이폰 잠금화면 iphone lockscreen wallpaper">
+        <div class="card-head">
+          <div class="card-number">14</div>
+          <div class="card-meta">
+            <h3 class="card-title">아이폰 잠금화면용 배경화면</h3>
+            <div class="card-howto">레퍼런스 이미지를 업로드 후 아래 프롬프트를 넣으세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Ultra realistic iPhone lockscreen wallpaper, trendy couple photographed from an extreme low-angle perspective as if the camera is placed on the ground looking upward. Beautiful woman wearing neon red sweatshirt, neon red sweat pants, white sneakers, making a peace sign. Man wearing neon red sweatshirt, neon red sweat pants, white sneakers, stepping confidently toward the camera. Bright blue sky background. Colorful doodle flowers, yellow dashed outline surrounding both characters, white sketch lines, hearts, sparkles and playful sticker elements. Realistic iPhone lockscreen overlay with Dynamic Island, lock icon, large clock 09:41, Saturday May 16, battery 92%, weather widget and notification cards. Tiny chibi versions of the couple standing near the clock. Apple keynote quality, ultra realistic, 8K masterpiece wallpaper. Dont change face rasio 3:4. make it HD</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+      <article class="card" id="p15" data-search="여행 타이포그래피 typography travel">
+        <div class="card-head">
+          <div class="card-number">15</div>
+          <div class="card-meta">
+            <h3 class="card-title">여행 타이포그래피 생성</h3>
+            <div class="card-howto">레퍼런스 이미지를 업로드 후 아래 프롬프트를 넣으세요.</div>
+          </div>
+        </div>
+        <div class="prompt-wrap">
+          <div class="prompt-text">Create an ultra-high-resolution typography-based travel poster design themed around [CITY_NAME].
+Aspect ratio: (16:9 poster)
+IMPORTANT:
+All visible text inside the poster must be in English only.
+Typography must be perfectly spelled and professionally typeset.
+Absolutely no distorted letters, random symbols, broken text, or AI-generated gibberish.
+Aspect ratio: 16:9 poster
+CORE COMPOSITION:
+Place the giant English word "[CITY_NAME]" prominently in the center of the composition
+Each individual letter should contain a different illustrated scene from the city
+Letters should be tall, elongated, bold sans-serif forms
+The typography itself should feel like a series of "city gallery windows"
+Distribute landmarks, streets, transportation, nature, culture, and architecture naturally across the letters
+Scenes should visually flow from one letter into another like one connected urban panorama
+TOP HORIZONTAL STRIP:
+At the top of the poster, include a thin panoramic horizontal strip containing:
+city skyline silhouettes
+cars
+trams or trains
+boats if relevant
+birds
+clouds
+sun
+All elements should appear minimalist, elegant, and rhythmically balanced.
+STYLE:
+mid-century modern editorial poster,
+Swiss graphic design,
+minimal vector illustration,
+architectural infographic aesthetic,
+travel typography poster,
+flat geometric illustration,
+ultra clean composition,
+premium magazine design,
+screenprint poster feeling,
+retro-futuristic travel branding
+ILLUSTRATION STYLE:
+flat vector shapes only
+no realism
+no gradients
+no texture noise
+clean geometric shadows
+simplified architectural forms
+map-like top-down illustration mixed with side-view cityscape
+subtle line-art details
+perfectly clean vector edges
+strong negative space usage
+harmonious visual rhythm between letters
+TYPOGRAPHY:
+giant bold sans-serif typography
+letters occupy most of the canvas height
+ultra precise alignment
+each letter acts as an independent framed illustration panel
+smooth rounded corners where appropriate
+editorial spacing
+highly balanced composition
+typography must look professionally designed, print-ready, and geometrically perfect
+COLOR PALETTE:
+Automatically derive a cohesive palette inspired by [CITY_NAME].
+Examples:
+coastal city → aqua, sand, coral, muted teal
+desert city → terracotta, beige, warm cream
+cyber city → mint, navy, steel blue
+historic European city → dusty rose, olive green, parchment
+Use:
+muted pastel tones
+soft vintage travel poster colors
+elegant low-saturation combinations
+maximum 4–6 colors only
+CONTENT GENERATION:
+Automatically include:
+iconic landmarks of [CITY_NAME]
+famous streets and transportation
+local urban patterns
+nearby nature elements
+skyline silhouettes
+bridges, rivers, or coastline if relevant
+culturally symbolic architecture
+recognizable local atmosphere
+COMPOSITION:
+centered typography composition
+white or soft ivory background
+lots of breathing room
+top panoramic strip balances the heavy typography below
+asymmetrical but visually balanced layout
+each letter contains different scene depth and perspective
+premium poster hierarchy with museum-quality layout
+MOOD:
+premium,
+intellectual,
+calm,
+design-forward,
+travel editorial aesthetic,
+stylish enough for a museum gift shop poster
+QUALITY:
+8K ultra detailed,
+print-ready,
+extremely sharp vector edges,
+perfect typography rendering,
+clean professional graphic design,
+high-end editorial poster quality,
+no distorted text,
+no random characters,
+no spelling errors,
+no AI artifacts</div>
+          <div class="prompt-actions">
+            <button class="toggle-btn">전체 보기</button>
+            <button class="copy-btn">📋 프롬프트 복사</button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  // Copy button
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const text = btn.closest('.prompt-wrap').querySelector('.prompt-text').innerText;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+      }
+      const original = btn.innerHTML;
+      btn.innerHTML = '✓ 복사 완료';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.innerHTML = original;
+        btn.classList.remove('copied');
+      }, 1500);
+    });
+  });
+
+  // Expand / collapse
+  document.querySelectorAll('.toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pre = btn.closest('.prompt-wrap').querySelector('.prompt-text');
+      const expanded = pre.classList.toggle('expanded');
+      btn.textContent = expanded ? '접기' : '전체 보기';
+    });
+  });
+
+</script>
+</body>
+</html>
