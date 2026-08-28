@@ -426,11 +426,11 @@
       </a>
     </div>
 
-    <a class="gift-banner" href="https://blog.naver.com/woojooboss/223558177937" target="_blank" rel="noopener">
+    <a class="gift-banner" href="https://supereasyai.vercel.app" target="_blank" rel="noopener">
       <img class="gift-icon" src="gift.png" alt="gift" />
       <div class="gift-text">
-        <div class="gift-label">우주보스의 선물</div>
-        <div class="gift-title">10GB 분량의 무료 콘텐츠 소스팩 받기</div>
+        <div class="gift-label">9월 10일(목) 저녁 8시 · 유튜브 라이브</div>
+        <div class="gift-title">4060세대를 위한 딱쉬운 클로드 코드 무료특강 신청하기</div>
       </div>
       <div class="gift-arrow">→</div>
     </a>
@@ -960,5 +960,20 @@ no AI artifacts</div>
   });
 
 </script>
+
+<style id="lecture-banner-override">
+.cta-banner,.gift-banner,header .cta{
+  background:linear-gradient(135deg,#3a2f10 0%,#1a1a1a 55%,#000 100%)!important;
+  border:2px solid #caaa44!important;
+  animation:ctaGlow 2.4s ease-in-out infinite!important;
+  transition:transform .18s ease,box-shadow .18s ease!important;
+}
+.cta-banner:hover,.gift-banner:hover,header .cta:hover{transform:translateY(-3px)!important}
+@keyframes ctaGlow{0%,100%{box-shadow:0 10px 30px rgba(202,170,68,.35)}50%{box-shadow:0 12px 46px rgba(202,170,68,.65)}}
+.cta-banner .badge{background:linear-gradient(135deg,#e8cf7a,#caaa44)!important;color:#1a1a1a!important;box-shadow:0 4px 16px rgba(202,170,68,.6)!important}
+.cta-banner .eb,.gift-banner .gift-label,header .cta .brand{color:#e8cf7a!important}
+.cta-banner .tt,.gift-banner .gift-title,header .cta .desc{color:#fff!important}
+.cta-banner .arrow,.gift-banner .gift-arrow,header .cta .arrow{color:#e8cf7a!important}
+</style>
 </body>
 </html>
